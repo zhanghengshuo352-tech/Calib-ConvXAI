@@ -33,7 +33,7 @@ def agreement_fraction(logs: Sequence[LogLike]) -> float:
     if not logs:
         return 0.0
     agreements = sum(
-        get_field(log, "final_decision") == get_field(log, "ai_recommendation")
+        bool(get_field(log, "final_agrees_with_ai"))
         for log in logs
     )
     return agreements / len(logs)
@@ -54,6 +54,38 @@ def final_accuracy(logs: Sequence[LogLike]) -> float:
     return correct / len(logs)
 
 
+def positive_ai_reliance_like_rate(logs: Sequence[LogLike]) -> float:
+    disagreement_logs = [log for log in logs if bool(get_field(log, "disagreement_flag"))]
+    if not disagreement_logs:
+        return 0.0
+    count = sum(bool(get_field(log, "positive_ai_reliance_like")) for log in disagreement_logs)
+    return count / len(disagreement_logs)
+
+
+def positive_self_reliance_like_rate(logs: Sequence[LogLike]) -> float:
+    disagreement_logs = [log for log in logs if bool(get_field(log, "disagreement_flag"))]
+    if not disagreement_logs:
+        return 0.0
+    count = sum(bool(get_field(log, "positive_self_reliance_like")) for log in disagreement_logs)
+    return count / len(disagreement_logs)
+
+
+def negative_ai_reliance_like_rate(logs: Sequence[LogLike]) -> float:
+    disagreement_logs = [log for log in logs if bool(get_field(log, "disagreement_flag"))]
+    if not disagreement_logs:
+        return 0.0
+    count = sum(bool(get_field(log, "negative_ai_reliance_like")) for log in disagreement_logs)
+    return count / len(disagreement_logs)
+
+
+def negative_self_reliance_like_rate(logs: Sequence[LogLike]) -> float:
+    disagreement_logs = [log for log in logs if bool(get_field(log, "disagreement_flag"))]
+    if not disagreement_logs:
+        return 0.0
+    count = sum(bool(get_field(log, "negative_self_reliance_like")) for log in disagreement_logs)
+    return count / len(disagreement_logs)
+
+
 def summarize_logs(logs: Sequence[LogLike]) -> Dict[str, float]:
     return {
         "total_trials": float(total_trials(logs)),
@@ -62,6 +94,10 @@ def summarize_logs(logs: Sequence[LogLike]) -> Dict[str, float]:
         "agreement_fraction": agreement_fraction(logs),
         "switch_fraction": switch_fraction(logs),
         "final_accuracy": final_accuracy(logs),
+        "positive_ai_reliance_like_rate": positive_ai_reliance_like_rate(logs),
+        "positive_self_reliance_like_rate": positive_self_reliance_like_rate(logs),
+        "negative_ai_reliance_like_rate": negative_ai_reliance_like_rate(logs),
+        "negative_self_reliance_like_rate": negative_self_reliance_like_rate(logs),
     }
 
 
