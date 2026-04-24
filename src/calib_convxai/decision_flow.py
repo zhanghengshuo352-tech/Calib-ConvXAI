@@ -143,49 +143,8 @@ def log_to_dict(log: TrialLog) -> Dict[str, Any]:
 
 
 def demo() -> List[Dict[str, Any]]:
-    """
-    Small demo showing one baseline trial and one Calib-ConvXAI trial.
-    """
-
-    # Trial 1:
-    # user initially correct, AI wrong, user switches to AI -> bad overreliance-like case
-    task_1 = Task(
-        task_id="task_001",
-        task_text="A user is shown a decision task with two possible labels: A or B.",
-        ai_recommendation="B",
-        correct_answer="A",
-    )
-
-    # Trial 2:
-    # user initially correct, AI wrong, user keeps own answer after calibration -> good self-reliance-like case
-    task_2 = Task(
-        task_id="task_002",
-        task_text="A second decision task with two possible labels: A or B.",
-        ai_recommendation="B",
-        correct_answer="A",
-    )
-
-    engine = CalibConvXAIEngine()
-
-    baseline_log = engine.run_trial(
-        participant_id="P001",
-        condition="baseline-convxai",
-        task=task_1,
-        first_decision="A",
-        final_decision="B",
-        calibration_prompt_response=None,
-    )
-
-    calib_log = engine.run_trial(
-        participant_id="P002",
-        condition="calib-convxai",
-        task=task_2,
-        first_decision="A",
-        final_decision="A",
-        calibration_prompt_response="I relied on cue_1 and cue_2.",
-    )
-
-    return [log_to_dict(baseline_log), log_to_dict(calib_log)]
+    from src.calib_convxai.sample_data import build_sample_logs
+    return build_sample_logs()
 
 
 if __name__ == "__main__":
